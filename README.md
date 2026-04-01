@@ -136,6 +136,35 @@ print(result.url);   // 'https://example.com/page'
 print(result.html);  // '<html>...</html>'
 ```
 
+### Decompressor (Python)
+
+```bash
+pip install hpack-html
+```
+
+```python
+from hpack_html import unpack
+
+result = unpack(packed_bytes)
+print(result.url)       # 'https://example.com/page'
+print(result.html)      # '<html>...</html>'
+print(result.checksum_valid)  # True
+```
+
+### Decompressor (Go)
+
+```bash
+go get github.com/andrehrferreira/hpack-html-go
+```
+
+```go
+import hpack "github.com/andrehrferreira/hpack-html-go"
+
+result, _ := hpack.Unpack(data)
+fmt.Println(result.URL)
+fmt.Println(result.HTML[:100])
+```
+
 ### Decompressor (Rust)
 
 ```toml
@@ -146,12 +175,23 @@ hpack-html = "0.1"
 ```rust
 use hpack_html::unpack;
 
-let packed: &[u8] = /* received from network */;
 let result = unpack(packed)?;
-
 println!("URL: {}", result.url);
 println!("HTML: {} bytes", result.html.len());
 ```
+
+## 📦 All SDKs
+
+| Package | Registry | Language | Role | Deps |
+|---------|----------|----------|------|------|
+| [`hpack-html-js`](packages/hpack-html-js/) | npm | TypeScript | Compressor (browser, extension, Flutter) | fflate (8KB) |
+| [`hpack-html`](packages/hpack-html/) | npm | TypeScript | Decompressor + core | fflate |
+| [`hpack-html`](packages/hpack-html-rs/) | crates.io | Rust | Decompressor | flate2, crc32fast |
+| [`hpack-html`](packages/hpack-html-py/) | PyPI | Python | Pack + Unpack | zero (stdlib) |
+| [`hpack-html-go`](packages/hpack-html-go/) | go get | Go | Pack + Unpack | zero (stdlib) |
+| [`hpack_html`](packages/hpack-html-dart/) | pub.dev | Dart | Pack + Unpack | zero (dart:io) |
+
+All 6 SDKs are cross-validated against 14 canonical test vectors with SHA256 byte-exact match.
 
 ## 📐 Binary Format (`.hpack`)
 
@@ -189,12 +229,13 @@ println!("HTML: {} bytes", result.html.len());
 ```
 hpack-html/
   packages/
-    core/                  # Shared types, constants, VarInt, CRC32
-    compressor/            # JS compressor (browser-safe, pure JS)
-    decompressor-ts/       # TypeScript decompressor
-    decompressor-rust/     # Rust decompressor crate
-    flutter/               # Dart/Flutter SDK (pack + unpack)
-    test-vectors/          # Cross-SDK golden test files
+    hpack-html/            # npm: core + TS decompressor
+    hpack-html-js/         # npm: pure JS compressor (browser)
+    hpack-html-rs/         # crates.io: Rust decompressor
+    hpack-html-py/         # PyPI: Python pack + unpack
+    hpack-html-go/         # Go module: pack + unpack
+    hpack-html-dart/       # pub.dev: Dart/Flutter pack + unpack
+    test-vectors/          # 14 canonical .hpack test vectors
 ```
 
 ## ⚡ Performance Targets
@@ -232,6 +273,9 @@ Raw HTML (100KB)
 | Binary format | ✅ Compact | ✅ | ✅ | ❌ (string) |
 | Rust decompressor | ✅ flate2 | ✅ flate2 | ✅ brotli | ❌ |
 | TypeScript SDK | ✅ | Manual | Manual | ✅ |
+| Python SDK | ✅ (stdlib) | Manual | Manual | ❌ |
+| Go SDK | ✅ (stdlib) | Manual | Manual | ❌ |
+| Dart/Flutter SDK | ✅ | ❌ | ❌ | ❌ |
 | Bundle size | 8KB | 0-8KB | 138KB | <1KB |
 | Chrome ext safe | ✅ | ✅ | ❌ (WASM) | ✅ |
 
@@ -241,14 +285,29 @@ Raw HTML (100KB)
 # Install dependencies
 bun install
 
-# Run benchmark
-cd benchmark && bun run fetch-html.ts && bun run index.ts
+# Run TypeScript tests (172 tests)
+bun run test
+
+# Run Rust tests (16 tests)
+cd packages/hpack-html-rs && cargo test
+
+# Run Python tests (30 tests)
+cd packages/hpack-html-py && python -m pytest tests/ -v
+
+# Run Go tests (27 tests)
+cd packages/hpack-html-go && go test -v ./...
+
+# Cross-SDK validation (all 14 vectors)
+bun run packages/test-vectors/validate-ts.ts
+python packages/test-vectors/validate-py.py
+bash packages/test-vectors/validate-go.sh
+bash packages/test-vectors/validate-rust.sh
+
+# E2E verification (real pages)
+bun run benchmark/e2e-verify.ts
 
 # Type check
 bun run type-check
-
-# Run tests
-bun test
 
 # Build
 bun run build
