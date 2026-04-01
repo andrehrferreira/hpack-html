@@ -54,12 +54,25 @@ jobs:
         with:
           bun-version: latest
       - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
       - run: bun install
+      # Build hpack-html first so hpack-html-js can resolve the dependency
+      - name: Build hpack-html
+        run: cd packages/hpack-html && bunx tsup src/index.ts --format esm,cjs --dts --clean
       - name: Generate fresh test vectors
         run: bun run packages/test-vectors/generate.ts
       - name: Validate with TS decompressor
         run: bun run packages/test-vectors/validate-ts.ts
+      - name: Validate with Python decompressor
+        run: python packages/test-vectors/validate-py.py
       - name: Copy vectors to Rust
         run: cp -r packages/test-vectors/fixtures packages/hpack-html-rs/tests/fixtures
       - name: Validate with Rust decompressor
         run: cd packages/hpack-html-rs && cargo test
+      - name: Validate with Go decompressor
+        run: cd packages/hpack-html-go && go test -v -run TestCrossSDKVectors ./...
