@@ -1,0 +1,12 @@
+name: hpack_html
+description: High-performance lossless HTML compression — pack and unpack .hpack binary packets.
+version: 0.1.0
+homepage: https://github.com/andrehrferreira/hpack-html
+repository: https://github.com/andrehrferreira/hpack-html
+issue_tracker: https://github.com/andrehrferreira/hpack-html/issues
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dev_dependencies:
+  test: ^1.24.0
