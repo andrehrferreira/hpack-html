@@ -1,0 +1,16 @@
+{
+  "url": "https://www.americanas.com.br/produto/cached",
+  "etag": "\"americanas-cached-etag-1775075717286\"",
+  "signature": "sig-americanas-cached-xjlht5ob",
+  "contentType": "text/html; charset=utf-8",
+  "timestamp": 1775075717286,
+  "encoding": "utf-8",
+  "custom": {
+    "source": "test-vector",
+    "page": "americanas-cached"
+  },
+  "htmlLength": 102454,
+  "htmlSha256": "a7d6d7289d426e48f5b5200c05aefb865871a1f80e052e40e44690ec389dd56b",
+  "minified": true,
+  "checksumValid": true
+}

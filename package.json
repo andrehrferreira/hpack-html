@@ -1,0 +1,34 @@
+{
+  "name": "hpack-html",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "High-performance lossless HTML compression for large-scale web crawling",
+  "author": "Andre Ferreira <andrehrf@gmail.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrehrferreira/hpack-html.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andrehrferreira/hpack-html/issues"
+  },
+  "homepage": "https://github.com/andrehrferreira/hpack-html#readme",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint packages/*/src/**/*.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^3.1.0",
+    "@vitest/coverage-v8": "^3.1.0",
+    "tsup": "^8.0.0"
+  }
+}

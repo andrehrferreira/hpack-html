@@ -2,9 +2,9 @@
 
 [![TypeScript](https://img.shields.io/badge/typescript-5.0%2B-blue.svg)](https://www.typescriptlang.org/)
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Bundle Size](https://img.shields.io/badge/bundle-~8KB%20gzip-brightgreen.svg)](https://github.com/nicollasbolado/hpack-html)
-[![Pure JS](https://img.shields.io/badge/runtime-pure%20JS-yellow.svg)](https://github.com/nicollasbolado/hpack-html)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
+[![Bundle Size](https://img.shields.io/badge/bundle-~8KB%20gzip-brightgreen.svg)](https://github.com/andrehrferreira/hpack-html)
+[![Pure JS](https://img.shields.io/badge/runtime-pure%20JS-yellow.svg)](https://github.com/andrehrferreira/hpack-html)
 
 A high-performance, lossless HTML compression library designed for large-scale web crawling. Packs HTML pages into a compact binary format (`.hpack`) with structured metadata headers, achieving **78-82% compression ratios** with sub-5ms compression times.
 
@@ -57,16 +57,31 @@ Real-world benchmark on an **Americanas.com.br product page** (101.65 KB of HTML
 
 **fflate delivers 78.57% compression in 4.88ms with only 8KB bundle and zero WASM.** The 4% gap to Brotli costs 138KB of WASM and 88x slower compression — not worth it for real-time crawl ingestion.
 
+### Real-World Results (hpack-html pipeline)
+
+End-to-end results using the full `pack()` pipeline (minify + DEFLATE + .hpack headers) on real crawled pages, cross-validated between JS and Rust decompressors (SHA256 byte-exact match):
+
+| Page | Raw HTML | .hpack Size | Reduction | Cross-SDK Verified |
+|------|----------|-------------|-----------|-------------------|
+| **Americanas.com.br** (product page) | 101.6 KB | 22.0 KB | **78.4%** | JS ↔ Rust ✓ |
+| **Wikipedia** (HTML article, 489KB) | 489.8 KB | 89.7 KB | **81.7%** | JS ↔ Rust ✓ |
+| **Hacker News** (front page) | 33.7 KB | 5.8 KB | **82.7%** | JS ↔ Rust ✓ |
+
+- Header overhead per packet: ~200 bytes (URL + ETag + Signature + Timestamp + custom fields)
+- Compression includes HTML minification (whitespace, comments, attribute sorting)
+- All packets include CRC32 integrity checksum
+- Rust decompressor produces byte-identical HTML output (verified via SHA256)
+
 ## 🚀 Quick Start
 
 ### Compressor (JavaScript / Browser / Flutter)
 
 ```bash
-npm install @hpack-html/compressor
+npm install hpack-html-js
 ```
 
 ```typescript
-import { pack } from '@hpack-html/compressor';
+import { pack } from 'hpack-html-js';
 
 const html = '<html>...</html>';
 
@@ -83,11 +98,11 @@ await fetch('/ingest', { method: 'POST', body: packed });
 ### Decompressor (TypeScript)
 
 ```bash
-npm install @hpack-html/decompressor
+npm install hpack-html
 ```
 
 ```typescript
-import { unpack } from '@hpack-html/decompressor';
+import { unpack } from 'hpack-html';
 
 const result = await unpack(packed);
 
@@ -252,4 +267,4 @@ bun run build
 
 ## 📄 License
 
-MIT License — See [LICENSE](./LICENSE) for details.
+Apache License 2.0 — See [LICENSE](./LICENSE) for details.

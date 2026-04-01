@@ -42,6 +42,9 @@ benchmark/bun.lockb
 target/
 Cargo.lock
 
+# Coverage
+coverage/
+
 # OS
 Desktop.ini
 ehthumbs.db
