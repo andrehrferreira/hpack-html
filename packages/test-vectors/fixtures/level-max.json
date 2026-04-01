@@ -1,0 +1,16 @@
+{
+  "description": "Compression level: max (level 9)",
+  "url": "https://example.com/max",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002356,
+  "encoding": null,
+  "custom": null,
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "ec2b2d78a4b573a3c407ab81771b9bc9b765ea766c74ad50cb6aba38d95bc9cf",
+  "rawHtmlBytes": 5311,
+  "packedBytes": 142
+}

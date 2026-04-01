@@ -1,0 +1,16 @@
+{
+  "description": "Unicode: CJK, emoji, Arabic, Cyrillic, Latin accents",
+  "url": "https://example.com/日本語",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002347,
+  "encoding": null,
+  "custom": null,
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "ee1b012fd92dc76cd4b29c6174ebb28780dcdc0ade23d36b4d4758c1ed69ebfc",
+  "rawHtmlBytes": 51,
+  "packedBytes": 116
+}

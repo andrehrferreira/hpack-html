@@ -9,7 +9,6 @@ repository = "https://github.com/andrehrferreira/hpack-html"
 keywords = ["html", "compression", "deflate", "crawler", "hpack"]
 categories = ["compression", "web-programming"]
 readme = "README.md"
-license-file = "LICENSE"
 
 [dependencies]
 flate2 = { version = "1", default-features = false, features = ["rust_backend"] }

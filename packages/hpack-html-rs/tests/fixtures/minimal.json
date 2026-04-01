@@ -1,0 +1,16 @@
+{
+  "description": "Minimal HTML, no minification, with checksum",
+  "url": "https://example.com/minimal",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002344,
+  "encoding": null,
+  "custom": null,
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "78b334d77fe932f2235bb53d11356784a4af7d2c78be23cd1da391cdb835a41d",
+  "rawHtmlBytes": 20,
+  "packedBytes": 77
+}

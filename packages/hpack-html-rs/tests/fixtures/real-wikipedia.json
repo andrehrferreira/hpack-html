@@ -1,0 +1,19 @@
+{
+  "description": "Real page: https://en.wikipedia.org/wiki/HTML",
+  "url": "https://en.wikipedia.org/wiki/HTML",
+  "etag": "\"real-wikipedia-etag\"",
+  "signature": "sig-real-wikipedia",
+  "contentType": "text/html; charset=utf-8",
+  "timestamp": 1711929600000,
+  "encoding": "utf-8",
+  "custom": {
+    "source": "test-vector",
+    "page": "real-wikipedia"
+  },
+  "minified": true,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "71eeef6c34560f5c274c0fc21472e3eaf61d4c45b6424df9b1480cb06ab087a3",
+  "rawHtmlBytes": 501544,
+  "packedBytes": 91859
+}

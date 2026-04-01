@@ -1,0 +1,19 @@
+{
+  "description": "Real page: https://news.ycombinator.com/",
+  "url": "https://news.ycombinator.com/",
+  "etag": "\"real-hackernews-etag\"",
+  "signature": "sig-real-hackernews",
+  "contentType": "text/html; charset=utf-8",
+  "timestamp": 1711929600000,
+  "encoding": "utf-8",
+  "custom": {
+    "source": "test-vector",
+    "page": "real-hackernews"
+  },
+  "minified": true,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "1697c6071f258e8a1e701c01af4dcd75ce0f821ebec8c4dc2252c9e958e6309f",
+  "rawHtmlBytes": 34508,
+  "packedBytes": 5948
+}

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  typescript:
+    name: TypeScript (test + type-check + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run test
+      - run: bun run test:coverage
+      - run: bun run type-check
+      - name: Build hpack-html
+        run: cd packages/hpack-html && bunx tsup src/index.ts --format esm,cjs --dts --clean
+      - name: Build hpack-html-js
+        run: cd packages/hpack-html-js && bunx tsup src/index.ts --format esm,cjs --dts --clean
+      - name: Validate test vectors (TS)
+        run: bun run packages/test-vectors/validate-ts.ts
+      - name: E2E verification (real pages)
+        run: bun run benchmark/e2e-verify.ts
+
+  rust:
+    name: Rust (test + clippy + fmt)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/hpack-html-rs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - run: cargo fmt --check
+      - run: cargo clippy -- -D warnings
+      - run: cargo test
+      - run: cargo build --release
+
+  cross-sdk:
+    name: Cross-SDK Validation
+    needs: [typescript, rust]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: dtolnay/rust-toolchain@stable
+      - run: bun install
+      - name: Generate fresh test vectors
+        run: bun run packages/test-vectors/generate.ts
+      - name: Validate with TS decompressor
+        run: bun run packages/test-vectors/validate-ts.ts
+      - name: Copy vectors to Rust
+        run: cp -r packages/test-vectors/fixtures packages/hpack-html-rs/tests/fixtures
+      - name: Validate with Rust decompressor
+        run: cd packages/hpack-html-rs && cargo test

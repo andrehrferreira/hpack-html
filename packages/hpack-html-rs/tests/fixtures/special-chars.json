@@ -1,0 +1,16 @@
+{
+  "description": "HTML entities, special chars in URL and body",
+  "url": "https://example.com/special?a=1&b=2&c=<3>",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002357,
+  "encoding": null,
+  "custom": null,
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "0b9231ec9eb1cb35717907b1d6d6093647578bd036b32e6d5b5b5c6ecef011d1",
+  "rawHtmlBytes": 77,
+  "packedBytes": 147
+}

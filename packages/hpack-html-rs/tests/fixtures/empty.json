@@ -1,0 +1,16 @@
+{
+  "description": "Empty HTML body",
+  "url": "https://example.com/empty",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002346,
+  "encoding": null,
+  "custom": null,
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "rawHtmlBytes": 0,
+  "packedBytes": 57
+}

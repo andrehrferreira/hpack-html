@@ -1,0 +1,16 @@
+{
+  "description": "HTML minification enabled (comments, whitespace, optional tags)",
+  "url": "https://example.com/minified",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002352,
+  "encoding": null,
+  "custom": null,
+  "minified": true,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "c14d8025d74958637d6c1f7ba0348ce520b2a389617804b8ebd52d91c76bcb8d",
+  "rawHtmlBytes": 91,
+  "packedBytes": 115
+}

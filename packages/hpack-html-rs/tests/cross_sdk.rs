@@ -1,14 +1,20 @@
 use hpack_html::{read_headers, unpack, unpack_with_options, UnpackOptions};
 use sha2::Digest;
+use std::fs;
+use std::path::Path;
+
+fn fixtures_dir() -> String {
+    format!("{}/tests/fixtures", env!("CARGO_MANIFEST_DIR"))
+}
 
 fn fixture(name: &str) -> Vec<u8> {
-    let path = format!("{}/tests/fixtures/{}", env!("CARGO_MANIFEST_DIR"), name);
-    std::fs::read(&path).unwrap_or_else(|e| panic!("Failed to read {}: {}", path, e))
+    let path = format!("{}/{}", fixtures_dir(), name);
+    fs::read(&path).unwrap_or_else(|e| panic!("Failed to read {}: {}", path, e))
 }
 
 fn fixture_json(name: &str) -> serde_json::Value {
-    let path = format!("{}/tests/fixtures/{}", env!("CARGO_MANIFEST_DIR"), name);
-    let data = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("Failed to read {}: {}", path, e));
+    let path = format!("{}/{}", fixtures_dir(), name);
+    let data = fs::read_to_string(&path).unwrap_or_else(|e| panic!("Failed to read {}: {}", path, e));
     serde_json::from_str(&data).unwrap()
 }
 
@@ -19,122 +25,134 @@ fn sha256_hex(data: &str) -> String {
 }
 
 // ---------------------------------------------------------------------------
-// Real page tests
+// Dynamic test: validate ALL vectors that have a .json file
 // ---------------------------------------------------------------------------
 
 #[test]
-fn americanas_cached() {
-    let data = fixture("americanas-cached.hpack");
-    let meta = fixture_json("americanas-cached.json");
-    let result = unpack(&data).unwrap();
+fn validate_all_vectors() {
+    let dir = fixtures_dir();
+    let entries: Vec<_> = fs::read_dir(&dir)
+        .unwrap_or_else(|e| panic!("Cannot read fixtures dir {}: {}", dir, e))
+        .filter_map(|e| e.ok())
+        .filter(|e| e.path().extension().map_or(false, |ext| ext == "hpack"))
+        .collect();
 
-    assert_eq!(result.url, meta["url"].as_str().unwrap());
-    assert_eq!(result.etag.as_deref(), meta["etag"].as_str());
-    assert_eq!(result.signature.as_deref(), meta["signature"].as_str());
-    assert_eq!(result.content_type.as_deref(), meta["contentType"].as_str());
-    assert_eq!(result.encoding.as_deref(), meta["encoding"].as_str());
-    assert_eq!(result.checksum_valid, Some(true));
-    assert_eq!(result.minified, true);
-    assert_eq!(sha256_hex(&result.html), meta["htmlSha256"].as_str().unwrap());
-}
+    assert!(!entries.is_empty(), "No .hpack fixtures found in {}", dir);
 
-#[test]
-fn americanas_live() {
-    let data = fixture("americanas.hpack");
-    let meta = fixture_json("americanas.json");
-    let result = unpack(&data).unwrap();
+    let mut passed = 0;
+    let mut tested = 0;
 
-    assert_eq!(result.url, meta["url"].as_str().unwrap());
-    assert_eq!(result.checksum_valid, Some(true));
-    assert_eq!(sha256_hex(&result.html), meta["htmlSha256"].as_str().unwrap());
-    assert!(result.html.contains("<") && result.html.contains(">"));
-}
+    for entry in &entries {
+        let hpack_path = entry.path();
+        let name = hpack_path.file_stem().unwrap().to_str().unwrap();
+        let json_path = Path::new(&dir).join(format!("{}.json", name));
 
-#[test]
-fn wikipedia() {
-    let data = fixture("wikipedia.hpack");
-    let meta = fixture_json("wikipedia.json");
-    let result = unpack(&data).unwrap();
+        if !json_path.exists() {
+            continue;
+        }
 
-    assert_eq!(result.url, meta["url"].as_str().unwrap());
-    assert_eq!(result.checksum_valid, Some(true));
-    assert_eq!(sha256_hex(&result.html), meta["htmlSha256"].as_str().unwrap());
-    assert!(result.html.contains("HTML"));
-}
+        tested += 1;
+        let data = fs::read(&hpack_path).unwrap();
+        let meta: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&json_path).unwrap()).unwrap();
 
-#[test]
-fn hackernews() {
-    let data = fixture("hackernews.hpack");
-    let meta = fixture_json("hackernews.json");
-    let result = unpack(&data).unwrap();
+        let result = unpack(&data).unwrap_or_else(|e| {
+            panic!("Failed to unpack {}: {}", name, e);
+        });
 
-    assert_eq!(result.url, meta["url"].as_str().unwrap());
-    assert_eq!(result.checksum_valid, Some(true));
-    assert_eq!(sha256_hex(&result.html), meta["htmlSha256"].as_str().unwrap());
-    assert!(result.html.contains("Hacker News"));
+        // URL
+        assert_eq!(
+            result.url,
+            meta["url"].as_str().unwrap(),
+            "{}: url mismatch",
+            name
+        );
+
+        // ETag
+        let expected_etag = meta["etag"].as_str();
+        assert_eq!(result.etag.as_deref(), expected_etag, "{}: etag mismatch", name);
+
+        // Signature
+        let expected_sig = meta["signature"].as_str();
+        assert_eq!(result.signature.as_deref(), expected_sig, "{}: signature mismatch", name);
+
+        // ContentType
+        let expected_ct = meta["contentType"].as_str();
+        assert_eq!(result.content_type.as_deref(), expected_ct, "{}: contentType mismatch", name);
+
+        // Timestamp
+        let expected_ts = meta["timestamp"].as_u64();
+        assert_eq!(result.timestamp, expected_ts, "{}: timestamp mismatch", name);
+
+        // Encoding
+        let expected_enc = meta["encoding"].as_str();
+        assert_eq!(result.encoding.as_deref(), expected_enc, "{}: encoding mismatch", name);
+
+        // Minified
+        assert_eq!(
+            result.minified,
+            meta["minified"].as_bool().unwrap(),
+            "{}: minified mismatch",
+            name
+        );
+
+        // Checksum
+        let expected_checksum = if meta["checksumValid"].is_null() {
+            None
+        } else {
+            Some(meta["checksumValid"].as_bool().unwrap())
+        };
+        assert_eq!(result.checksum_valid, expected_checksum, "{}: checksumValid mismatch", name);
+
+        // HTML SHA256 (the critical byte-exact check)
+        let html_hash = sha256_hex(&result.html);
+        assert_eq!(
+            html_hash,
+            meta["htmlSha256"].as_str().unwrap(),
+            "{}: HTML SHA256 mismatch (decompressed content differs)",
+            name
+        );
+
+        // Custom fields
+        if let Some(expected_custom) = meta["custom"].as_object() {
+            for (key, val) in expected_custom {
+                assert_eq!(
+                    result.custom.get(key).map(|s| s.as_str()),
+                    val.as_str(),
+                    "{}: custom.{} mismatch",
+                    name,
+                    key
+                );
+            }
+        }
+
+        passed += 1;
+    }
+
+    assert!(tested > 0, "No vectors with .json metadata found");
+    eprintln!("Cross-SDK validation: {}/{} vectors passed", passed, tested);
 }
 
 // ---------------------------------------------------------------------------
-// Synthetic edge case tests
+// Headers-only test
 // ---------------------------------------------------------------------------
 
 #[test]
-fn minimal_roundtrip() {
-    let data = fixture("minimal.hpack");
-    let result = unpack(&data).unwrap();
+fn headers_only() {
+    let dir = fixtures_dir();
+    let json_path = Path::new(&dir).join("all-fields.json");
+    if !json_path.exists() {
+        return;
+    }
 
-    assert_eq!(result.url, "https://example.com/minimal");
-    assert_eq!(result.html, "<h1>Hello World</h1>");
-    assert_eq!(result.minified, false);
-    assert_eq!(result.checksum_valid, Some(true));
-}
-
-#[test]
-fn empty_html() {
-    let data = fixture("empty.hpack");
-    let result = unpack(&data).unwrap();
-
-    assert_eq!(result.url, "https://example.com/empty");
-    assert_eq!(result.html, "");
-    assert_eq!(result.checksum_valid, Some(true));
-}
-
-#[test]
-fn unicode_content() {
-    let data = fixture("unicode.hpack");
-    let result = unpack(&data).unwrap();
-
-    assert_eq!(result.url, "https://example.com/日本語");
-    assert!(result.html.contains("日本語"));
-    assert!(result.html.contains("🌍"));
-    assert!(result.html.contains("مرحبا"));
-    assert!(result.html.contains("Привет"));
-    assert_eq!(result.checksum_valid, Some(true));
-}
-
-#[test]
-fn no_checksum() {
-    let data = fixture("no-checksum.hpack");
-    let result = unpack(&data).unwrap();
-
-    assert_eq!(result.url, "https://example.com/no-checksum");
-    assert_eq!(result.html, "<p>test</p>");
-    assert_eq!(result.checksum_valid, None);
-}
-
-// ---------------------------------------------------------------------------
-// Headers only
-// ---------------------------------------------------------------------------
-
-#[test]
-fn headers_only_real_page() {
-    let data = fixture("wikipedia.hpack");
-    let meta = fixture_json("wikipedia.json");
+    let data = fixture("all-fields.hpack");
+    let meta = fixture_json("all-fields.json");
     let result = read_headers(&data).unwrap();
 
     assert_eq!(result.url, meta["url"].as_str().unwrap());
     assert_eq!(result.etag.as_deref(), meta["etag"].as_str());
-    assert_eq!(result.html, ""); // body not decompressed
+    assert_eq!(result.signature.as_deref(), meta["signature"].as_str());
+    assert_eq!(result.html, "");
     assert_eq!(result.checksum_valid, None);
 }
 
@@ -193,17 +211,4 @@ fn skip_checksum_verification() {
     };
     let result = unpack_with_options(&data, &opts).unwrap();
     assert_eq!(result.checksum_valid, Some(false));
-}
-
-// ---------------------------------------------------------------------------
-// Custom fields from real pages
-// ---------------------------------------------------------------------------
-
-#[test]
-fn custom_fields_from_real_page() {
-    let data = fixture("americanas-cached.hpack");
-    let result = unpack(&data).unwrap();
-
-    assert_eq!(result.custom.get("source").map(|s| s.as_str()), Some("test-vector"));
-    assert_eq!(result.custom.get("page").map(|s| s.as_str()), Some("americanas-cached"));
 }

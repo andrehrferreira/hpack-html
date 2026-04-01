@@ -1,0 +1,16 @@
+{
+  "description": "Deeply nested HTML with optional closing tags removed by minifier",
+  "url": "https://example.com/table",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002358,
+  "encoding": null,
+  "custom": null,
+  "minified": true,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "cbf93e7aed0ccf787f18dc40add3033bbbf5d0eb503f68b466aceac9a9eb019d",
+  "rawHtmlBytes": 132,
+  "packedBytes": 102
+}

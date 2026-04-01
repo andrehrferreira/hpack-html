@@ -1,0 +1,21 @@
+{
+  "description": "Multiple custom key-value header fields",
+  "url": "https://example.com/custom",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002350,
+  "encoding": null,
+  "custom": {
+    "crawlerId": "chrome-ext-v3",
+    "sessionId": "sess-abc-123",
+    "pageType": "product",
+    "region": "us-east-1"
+  },
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "5c400e99027bb30c33eb5feaa3ec2066242d3a5e0527f82bf0ee2b8a0d336ca2",
+  "rawHtmlBytes": 31,
+  "packedBytes": 173
+}

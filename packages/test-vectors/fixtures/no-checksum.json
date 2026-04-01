@@ -1,0 +1,16 @@
+{
+  "description": "Packet without CRC32 checksum",
+  "url": "https://example.com/no-checksum",
+  "etag": null,
+  "signature": null,
+  "contentType": null,
+  "timestamp": 1775077002348,
+  "encoding": null,
+  "custom": null,
+  "minified": false,
+  "checksumValid": null,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "aab4dbbc536760a526ad38f2ad180a19836ce964dd4b5f1c2978a46ea0818e95",
+  "rawHtmlBytes": 23,
+  "packedBytes": 82
+}

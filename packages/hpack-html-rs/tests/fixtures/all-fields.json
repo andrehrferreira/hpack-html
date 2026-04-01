@@ -1,0 +1,16 @@
+{
+  "description": "All standard header fields populated",
+  "url": "https://www.example.com/page?id=123&lang=en",
+  "etag": "\"W/abc-def-123\"",
+  "signature": "hmac-sha256:abcdef1234567890abcdef1234567890",
+  "contentType": "text/html; charset=utf-8",
+  "timestamp": 1711929600000,
+  "encoding": "utf-8",
+  "custom": null,
+  "minified": false,
+  "checksumValid": true,
+  "compressionAlgorithm": "deflate",
+  "htmlSha256": "5569187dbf8af5b6cfbd28cad1c01e4e06971759458b2d85bc9e80e314e4b1da",
+  "rawHtmlBytes": 80,
+  "packedBytes": 232
+}
