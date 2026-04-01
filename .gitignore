@@ -45,6 +45,12 @@ Cargo.lock
 # Coverage
 coverage/
 
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
 # OS
 Desktop.ini
 ehthumbs.db
