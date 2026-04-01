@@ -14,7 +14,8 @@ fn fixture(name: &str) -> Vec<u8> {
 
 fn fixture_json(name: &str) -> serde_json::Value {
     let path = format!("{}/{}", fixtures_dir(), name);
-    let data = fs::read_to_string(&path).unwrap_or_else(|e| panic!("Failed to read {}: {}", path, e));
+    let data =
+        fs::read_to_string(&path).unwrap_or_else(|e| panic!("Failed to read {}: {}", path, e));
     serde_json::from_str(&data).unwrap()
 }
 
@@ -70,23 +71,47 @@ fn validate_all_vectors() {
 
         // ETag
         let expected_etag = meta["etag"].as_str();
-        assert_eq!(result.etag.as_deref(), expected_etag, "{}: etag mismatch", name);
+        assert_eq!(
+            result.etag.as_deref(),
+            expected_etag,
+            "{}: etag mismatch",
+            name
+        );
 
         // Signature
         let expected_sig = meta["signature"].as_str();
-        assert_eq!(result.signature.as_deref(), expected_sig, "{}: signature mismatch", name);
+        assert_eq!(
+            result.signature.as_deref(),
+            expected_sig,
+            "{}: signature mismatch",
+            name
+        );
 
         // ContentType
         let expected_ct = meta["contentType"].as_str();
-        assert_eq!(result.content_type.as_deref(), expected_ct, "{}: contentType mismatch", name);
+        assert_eq!(
+            result.content_type.as_deref(),
+            expected_ct,
+            "{}: contentType mismatch",
+            name
+        );
 
         // Timestamp
         let expected_ts = meta["timestamp"].as_u64();
-        assert_eq!(result.timestamp, expected_ts, "{}: timestamp mismatch", name);
+        assert_eq!(
+            result.timestamp, expected_ts,
+            "{}: timestamp mismatch",
+            name
+        );
 
         // Encoding
         let expected_enc = meta["encoding"].as_str();
-        assert_eq!(result.encoding.as_deref(), expected_enc, "{}: encoding mismatch", name);
+        assert_eq!(
+            result.encoding.as_deref(),
+            expected_enc,
+            "{}: encoding mismatch",
+            name
+        );
 
         // Minified
         assert_eq!(
@@ -102,7 +127,11 @@ fn validate_all_vectors() {
         } else {
             Some(meta["checksumValid"].as_bool().unwrap())
         };
-        assert_eq!(result.checksum_valid, expected_checksum, "{}: checksumValid mismatch", name);
+        assert_eq!(
+            result.checksum_valid, expected_checksum,
+            "{}: checksumValid mismatch",
+            name
+        );
 
         // HTML SHA256 (the critical byte-exact check)
         let html_hash = sha256_hex(&result.html);
