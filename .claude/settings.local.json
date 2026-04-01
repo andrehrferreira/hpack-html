@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:nickb.dev)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:blog.logrocket.com)",
+      "WebFetch(domain:paulcalvano.com)",
+      "WebFetch(domain:httptoolkit.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.debugbear.com)",
+      "WebFetch(domain:speedvitals.com)",
+      "Bash(bun --version)",
+      "Bash(bun init:*)",
+      "Bash(bun add:*)",
+      "Bash(bun run:*)",
+      "Bash(bun remove:*)",
+      "Bash(node -e \"const l = require\\('lzma/src/lzma.js'\\); console.log\\(typeof l, Object.keys\\(l\\)\\)\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__rulebook__rulebook_task_create"
+    ]
+  }
+}

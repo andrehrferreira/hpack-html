@@ -1,0 +1,47 @@
+# Rulebook - ignore runtime data, keep specs and tasks
+/.rulebook/*
+!/.rulebook/specs/
+!/.rulebook/tasks/
+!/.rulebook/tasks/**/*.md
+!/.rulebook/rulebook.json
+
+# Patterns added by @hivellm/rulebook
+# Added at: 2026-04-01T18:42:13.539Z
+
+*.log
+*.swo
+*.swp
+*~
+.DS_Store
+.cache/
+.env
+.env.*.local
+.env.local
+.idea/
+.vscode/
+Thumbs.db
+logs/
+temp/
+tmp/
+
+# Dependencies
+node_modules/
+bun.lockb
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Benchmark artifacts
+benchmark/sample.html
+benchmark/results.json
+benchmark/node_modules/
+benchmark/bun.lockb
+
+# Rust
+target/
+Cargo.lock
+
+# OS
+Desktop.ini
+ehthumbs.db
