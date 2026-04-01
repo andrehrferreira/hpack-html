@@ -30,7 +30,7 @@
     "build": "tsup src/index.ts --format esm,cjs --dts --clean"
   },
   "dependencies": {
-    "hpack-html": "workspace:*",
+    "hpack-html": "^0.1.0",
     "fflate": "^0.8.0"
   },
   "devDependencies": {
